@@ -1,30 +1,45 @@
 import React, { Component } from "react";
-import AnswerChoice from "./AnswerChoice";
 import http from "../APIServices/httpService";
 import config from "../APIServices/config.json";
 
 class Question extends Component {
-  state = {
-    questionList: [],
-    correctAnswerList: [],
-    answerList: [],
+  constructor() {
+    super();
+    this.state = {
+      questionList: [],
+      correctAnswerList: [],
+      answerList: [],
 
-    altQuestionList: [],
-    altCorrectAnswerList: [],
-    altAnswerList: [],
+      altQuestionList: [],
+      altCorrectAnswerList: [],
+      altAnswerList: [],
 
-    currentQuestion: "",
-    currentCorrectAnswer: "",
-    currentAnswerList: [],
+      currentQuestion: "",
+      currentCorrectAnswer: "",
+      currentAnswerList: [],
 
-    currentAltQuestion: "",
-    currentAltCorrectAnswer: "",
-    currentAltAnswerList: [],
+      currentAltQuestion: "",
+      currentAltCorrectAnswer: "",
+      currentAltAnswerList: [],
 
-    questionCount: 1,
-    questionAPI: [], //this has all the data from the api, need to run through this and split it up into question, answers, and correct answer
-    altOrNot: false,
-  };
+      questionCount: 1,
+      questionAPI: [], //this has all the data from the api, need to run through this and split it up into question, answers, and correct answer
+      altOrNot: false,
+    };
+    this.onValueChange = this.onValueChange.bind(this);
+    this.formSubmit = this.formSubmit.bind(this);
+  }
+
+  onValueChange(event) {
+    this.setState({
+      selectedOption: event.target.value,
+    });
+  }
+
+  formSubmit(event) {
+    event.preventDefault();
+    console.log(this.state.selectedOption);
+  }
 
   async componentDidMount() {
     //this runs on page start, get request for quiz info
@@ -86,7 +101,7 @@ class Question extends Component {
     }
   } // end of on component did mount
 
-  //this handle update updates the current question and the current answer
+  //this handle update updates the current question and the current answer, on submit
   handleUpdate = () => {
     this.setState({
       currentQuestion: this.state.questionList[this.state.questionCount]
@@ -97,17 +112,34 @@ class Question extends Component {
     this.setState({
       currentCorrectAnswer: this.state.correctAnswerList[
         this.state.questionCount
-      ].correctAnswer, //need two correct answers again idk why
+      ].correctAnswer,
       currentAltCorrectAnswer: this.state.altCorrectAnswerList[
         this.state.questionCount
-      ].correctAnswer, //need two correct answers again idk why
+      ].correctAnswer,
     });
     this.setState({
       currentAnswerList: this.state.answerList[this.state.questionCount],
       currentAltAnswerList: this.state.altAnswerList[this.state.questionCount],
     });
     this.setState({ questionCount: this.state.questionCount + 1 });
-    // this.state.questionCount++;
+
+    //this is where it checks if the answer entered for the current question is correct or wrong
+    //need to put api put request here to update user quiz database
+    if (this.state.altOrNot === true) {
+      if (this.state.selectedOption === this.state.currentCorrectAnswer) {
+        console.log("correct");
+      } else {
+        console.log("wrong");
+      }
+    } else {
+      if (this.state.selectedOption === this.state.currentAltCorrectAnswer) {
+        console.log("right");
+      } else {
+        console.log("wrong");
+      }
+    }
+
+    //random is alt question or not
     if (Math.random() >= 0.5) {
       this.setState({ altOrNot: true });
     } else {
@@ -121,31 +153,152 @@ class Question extends Component {
         {this.state.altOrNot === true && (
           <div>
             <h1>{this.state.currentQuestion}</h1>
-            <AnswerChoice label={this.state.currentAnswerList.answer1} />
-            <AnswerChoice label={this.state.currentAnswerList.answer2} />
-            <AnswerChoice label={this.state.currentAnswerList.answer3} />
-            <AnswerChoice label={this.state.currentAnswerList.answer4} />
+
+            <form onSubmit={this.formSubmit}>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={this.state.currentAnswerList.answer1}
+                    checked={
+                      this.state.selectedOption ===
+                      this.state.currentAnswerList.answer1
+                    }
+                    onChange={this.onValueChange}
+                  />
+                  {this.state.currentAnswerList.answer1}
+                </label>
+              </div>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={this.state.currentAnswerList.answer2}
+                    checked={
+                      this.state.selectedOption ===
+                      this.state.currentAnswerList.answer2
+                    }
+                    onChange={this.onValueChange}
+                  />
+                  {this.state.currentAnswerList.answer2}
+                </label>
+              </div>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={this.state.currentAnswerList.answer3}
+                    checked={
+                      this.state.selectedOption ===
+                      this.state.currentAnswerList.answer3
+                    }
+                    onChange={this.onValueChange}
+                  />
+                  {this.state.currentAnswerList.answer3}
+                </label>
+              </div>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={this.state.currentAnswerList.answer4}
+                    checked={
+                      this.state.selectedOption ===
+                      this.state.currentAnswerList.answer4
+                    }
+                    onChange={this.onValueChange}
+                  />
+                  {this.state.currentAnswerList.answer4}
+                </label>
+              </div>
+
+              <div>Selected option is : {this.state.selectedOption}</div>
+              <button
+                type="submit"
+                className="btn btn-success"
+                onClick={this.handleUpdate}
+              >
+                Submit
+              </button>
+            </form>
             <h1>Correct Answer: {this.state.currentCorrectAnswer}</h1>
           </div>
         )}
+
         {this.state.altOrNot === false && (
           <div>
             <h1>{this.state.currentAltQuestion}</h1>
-            <AnswerChoice label={this.state.currentAltAnswerList.answer1} />
-            <AnswerChoice label={this.state.currentAltAnswerList.answer2} />
-            <AnswerChoice label={this.state.currentAltAnswerList.answer3} />
-            <AnswerChoice label={this.state.currentAltAnswerList.answer4} />
+
+            <form onSubmit={this.formSubmit}>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={this.state.currentAltAnswerList.answer1}
+                    checked={
+                      this.state.selectedOption ===
+                      this.state.currentAltAnswerList.answer1
+                    }
+                    onChange={this.onValueChange}
+                  />
+                  {this.state.currentAltAnswerList.answer1}
+                </label>
+              </div>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={this.state.currentAltAnswerList.answer2}
+                    checked={
+                      this.state.selectedOption ===
+                      this.state.currentAltAnswerList.answer2
+                    }
+                    onChange={this.onValueChange}
+                  />
+                  {this.state.currentAltAnswerList.answer2}
+                </label>
+              </div>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={this.state.currentAltAnswerList.answer3}
+                    checked={
+                      this.state.selectedOption ===
+                      this.state.currentAltAnswerList.answer3
+                    }
+                    onChange={this.onValueChange}
+                  />
+                  {this.state.currentAltAnswerList.answer3}
+                </label>
+              </div>
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={this.state.currentAltAnswerList.answer4}
+                    checked={
+                      this.state.selectedOption ===
+                      this.state.currentAltAnswerList.answer4
+                    }
+                    onChange={this.onValueChange}
+                  />
+                  {this.state.currentAltAnswerList.answer4}
+                </label>
+              </div>
+
+              <div>Selected option is : {this.state.selectedOption}</div>
+              <button
+                type="submit"
+                className="btn btn-success"
+                onClick={this.handleUpdate}
+              >
+                Submit
+              </button>
+            </form>
             <h1>Correct Answer: {this.state.currentAltCorrectAnswer}</h1>
           </div>
         )}
-
-        <button
-          type="button"
-          className="btn btn-success"
-          onClick={this.handleUpdate}
-        >
-          Submit
-        </button>
       </React.Fragment>
     );
   }
