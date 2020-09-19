@@ -1,13 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Header extends Component {
-  render() {
-    return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        AMC Project
-      </nav>
-    );
-  }
-}
+const Header = ({ user }) => {
+  return (
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      AMC Project
+      {user && (
+        <span>
+          <h1>{user.name}</h1>
+        </span>
+      )}
+    </nav>
+  );
+};
 
 export default Header;

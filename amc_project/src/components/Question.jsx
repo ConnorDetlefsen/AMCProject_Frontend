@@ -28,6 +28,10 @@ class Question extends Component {
       questionCount: 1,
       questionAPI: [], //this has all the data from the api, need to run through this and split it up into question, answers, and correct answer
       altQuestionIfFalse: false,
+
+      QuizResults: [],
+      QuizOver: false,
+      test: false,
     };
     this.onValueChange = this.onValueChange.bind(this);
     this.formSubmit = this.formSubmit.bind(this);
@@ -48,6 +52,10 @@ class Question extends Component {
 
   async componentDidMount() {
     //this runs on page start, get request for quiz info
+    http.get(config.apiEndpoint + "/quizResults/").then((res) => {
+      console.log(res.data);
+      this.setState({ QuizResults: res.data });
+    });
     http.get(config.apiEndpoint + "/question/").then((res) => {
       console.log(res.data);
       this.setState({ questionAPI: res.data });
@@ -116,54 +124,110 @@ class Question extends Component {
 
   //this handle update updates the current question and the current answer, on submit
   handleMCUpdate = () => {
-    this.setState({
-      currentQuestionType: this.state.questionAPI[this.state.questionCount]
-        .questionType,
-      currentQuestion: this.state.questionList[this.state.questionCount]
-        .question,
-      currentAltQuestion: this.state.altQuestionList[this.state.questionCount]
-        .question,
-      currentCorrectAnswer: this.state.correctAnswerList[
-        this.state.questionCount
-      ].correctAnswer,
-      currentAltCorrectAnswer: this.state.altCorrectAnswerList[
-        this.state.questionCount
-      ].correctAnswer,
-      currentAnswerList: this.state.answerList[this.state.questionCount],
-      currentAltAnswerList: this.state.altAnswerList[this.state.questionCount],
-      questionCount: this.state.questionCount + 1,
-    });
-
-    //this is where it checks if the answer entered for the current question is correct or wrong
-    //need to put api put request here to update user quiz database
-    if (this.state.altQuestionIfFalse === true) {
-      if (this.state.selectedOption === this.state.currentCorrectAnswer) {
-        console.log("correct");
-      } else {
-        console.log("wrong");
-      }
+    if (this.state.questionAPI[this.state.questionCount] === undefined) {
+      console.log("end of quiz reached");
+      this.setState({ QuizOver: true });
     } else {
-      //if altQuestionIfFalse is false = alternate question
-      if (this.state.selectedOption === this.state.currentAltCorrectAnswer) {
-        console.log("right");
-      } else {
-        console.log("wrong");
-      }
-    }
+      this.setState({
+        currentQuestionType: this.state.questionAPI[this.state.questionCount]
+          .questionType,
+        currentQuestion: this.state.questionList[this.state.questionCount]
+          .question,
+        currentAltQuestion: this.state.altQuestionList[this.state.questionCount]
+          .question,
+        currentCorrectAnswer: this.state.correctAnswerList[
+          this.state.questionCount
+        ].correctAnswer,
+        currentAltCorrectAnswer: this.state.altCorrectAnswerList[
+          this.state.questionCount
+        ].correctAnswer,
+        currentAnswerList: this.state.answerList[this.state.questionCount],
+        currentAltAnswerList: this.state.altAnswerList[
+          this.state.questionCount
+        ],
+        questionCount: this.state.questionCount + 1,
+      });
 
-    //random is alt question or not
-    if (Math.random() >= 0.5) {
-      this.setState({ altQuestionIfFalse: true });
+      //this is where it checks if the answer entered for the current question is correct or wrong
+      //need to put api put request here to update user quiz database
+      if (this.state.altQuestionIfFalse === true) {
+        if (this.state.selectedOption === this.state.currentCorrectAnswer) {
+          console.log("correct");
+          //this part below sets the question to true if answer is correct
+          let questionVar = "question" + this.state.questionCount;
+          this.state.QuizResults[0][questionVar] = true;
+          http.put(
+            config.apiEndpoint + "/quizResults/1/",
+            this.state.QuizResults[0]
+          );
+        } else {
+          console.log("wrong");
+        }
+      } else {
+        //if altQuestionIfFalse is false = alternate question
+        if (this.state.selectedOption === this.state.currentAltCorrectAnswer) {
+          console.log("correct");
+          //this part below sets the question to true if answer is correct
+          let questionVar = "question" + this.state.questionCount;
+          this.state.QuizResults[0][questionVar] = true;
+          http.put(
+            config.apiEndpoint + "/quizResults/1/",
+            this.state.QuizResults[0]
+          );
+        } else {
+          console.log("wrong");
+        }
+      }
+      //random is alt question or not
+      if (Math.random() >= 0.5) {
+        this.setState({ altQuestionIfFalse: true });
+      } else {
+        this.setState({ altQuestionIfFalse: false });
+      }
+    } //end of else
+  };
+
+  handleFreeResponse = () => {
+    if (this.state.questionAPI[this.state.questionCount] === undefined) {
+      console.log("end of quiz reached");
+      this.setState({ QuizOver: true });
     } else {
-      this.setState({ altQuestionIfFalse: false });
-    }
+      this.setState({
+        currentQuestionType: this.state.questionAPI[this.state.questionCount]
+          .questionType,
+        currentQuestion: this.state.questionList[this.state.questionCount]
+          .question,
+        currentAltQuestion: this.state.altQuestionList[this.state.questionCount]
+          .question,
+        currentCorrectAnswer: this.state.correctAnswerList[
+          this.state.questionCount
+        ].correctAnswer,
+        currentAltCorrectAnswer: this.state.altCorrectAnswerList[
+          this.state.questionCount
+        ].correctAnswer,
+        currentAnswerList: this.state.answerList[this.state.questionCount],
+        currentAltAnswerList: this.state.altAnswerList[
+          this.state.questionCount
+        ],
+        questionCount: this.state.questionCount + 1,
+      }); //end of setstate
+      //random is alt question or not
+      if (Math.random() >= 0.5) {
+        this.setState({ altQuestionIfFalse: true });
+      } else {
+        this.setState({ altQuestionIfFalse: false });
+      }
+    } //end of else
+
+    console.log("free response answered");
   };
 
   render() {
     return (
       <React.Fragment>
         {this.state.altQuestionIfFalse === true &&
-          this.state.currentQuestionType === "MC" && (
+          this.state.currentQuestionType === "MC" &&
+          this.state.QuizOver !== true && (
             <div>
               <h1>{this.state.currentQuestion}</h1>
               <form onSubmit={this.formSubmit}>
@@ -247,7 +311,8 @@ class Question extends Component {
             </div>
           )}
         {this.state.altQuestionIfFalse === false &&
-          this.state.currentQuestionType === "MC" && (
+          this.state.currentQuestionType === "MC" &&
+          this.state.QuizOver !== true && (
             <div>
               <h1>{this.state.currentAltQuestion}</h1>
               <form onSubmit={this.formSubmit}>
@@ -329,12 +394,13 @@ class Question extends Component {
             </div>
           )}
         {this.state.currentQuestionType === "FREE" &&
-          this.state.altQuestionIfFalse === true && (
+          this.state.altQuestionIfFalse === true &&
+          this.state.QuizOver !== true && (
             <div>
               <h1>{this.state.currentQuestion}</h1>
-              <div class="form-group">
+              <div className="form-group">
                 <textarea
-                  class="form-control"
+                  className="form-control"
                   id="exampleFormControlTextarea1"
                   rows="3"
                 ></textarea>
@@ -343,7 +409,7 @@ class Question extends Component {
                 <button
                   type="submit"
                   className="btn btn-success"
-                  onClick={this.handleMCUpdate}
+                  onClick={this.handleFreeResponse}
                 >
                   Submit
                 </button>
@@ -351,13 +417,14 @@ class Question extends Component {
             </div>
           )}
         {this.state.currentQuestionType === "FREE" &&
-          this.state.altQuestionIfFalse === false && (
+          this.state.altQuestionIfFalse === false &&
+          this.state.QuizOver !== true && (
             <div>
               <h1>{this.state.currentAltQuestion}</h1>
               <form onSubmit={this.formSubmit}>
-                <div class="form-group">
+                <div className="form-group">
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     id="exampleFormControlTextarea1"
                     rows="3"
                   ></textarea>
@@ -365,13 +432,18 @@ class Question extends Component {
                 <button
                   type="submit"
                   className="btn btn-success"
-                  onClick={this.handleMCUpdate}
+                  onClick={this.handleFreeResponse}
                 >
                   Submit
                 </button>
               </form>
             </div>
           )}
+        {this.state.QuizOver === true && (
+          <div>
+            <h1>Quiz Completed</h1>
+          </div>
+        )}
       </React.Fragment>
     );
   }
