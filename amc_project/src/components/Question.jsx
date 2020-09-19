@@ -225,17 +225,19 @@ class Question extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.state.altQuestionIfFalse === true &&
-          this.state.currentQuestionType === "MC" &&
-          this.state.QuizOver !== true && (
-            <div>
-              <h1>{this.state.currentQuestion}</h1>
-              <form onSubmit={this.formSubmit}>
-                {this.state.currentAnswerList.answer1 !== "" && (
-                  <div className="radio">
-                    <label>
+        <div className="background">
+          {this.state.altQuestionIfFalse === true &&
+            this.state.currentQuestionType === "MC" &&
+            this.state.QuizOver !== true && (
+              <div>
+                <h1 className="center">{this.state.currentQuestion}</h1>
+                <form onSubmit={this.formSubmit} class="form">
+                  {this.state.currentAnswerList.answer1 !== "" && (
+                    <div className="inputGroup">
                       <input
                         type="radio"
+                        name="radio"
+                        id="radio1"
                         value={this.state.currentAnswerList.answer1}
                         checked={
                           this.state.selectedOption ===
@@ -243,16 +245,18 @@ class Question extends Component {
                         }
                         onChange={this.onValueChange}
                       />
-                      {this.state.currentAnswerList.answer1}
-                    </label>
-                  </div>
-                )}
+                      <label for="radio1">
+                        {this.state.currentAnswerList.answer1}
+                      </label>
+                    </div>
+                  )}
 
-                {this.state.currentAnswerList.answer2 !== "" && (
-                  <div className="radio">
-                    <label>
+                  {this.state.currentAnswerList.answer2 !== "" && (
+                    <div className="inputGroup">
                       <input
                         type="radio"
+                        name="radio"
+                        id="radio2"
                         value={this.state.currentAnswerList.answer2}
                         checked={
                           this.state.selectedOption ===
@@ -260,15 +264,17 @@ class Question extends Component {
                         }
                         onChange={this.onValueChange}
                       />
-                      {this.state.currentAnswerList.answer2}
-                    </label>
-                  </div>
-                )}
-                {this.state.currentAnswerList.answer3 !== "" && (
-                  <div className="radio">
-                    <label>
+                      <label for="radio2">
+                        {this.state.currentAnswerList.answer2}
+                      </label>
+                    </div>
+                  )}
+                  {this.state.currentAnswerList.answer3 !== "" && (
+                    <div className="inputGroup">
                       <input
                         type="radio"
+                        name="radio"
+                        id="radio3"
                         value={this.state.currentAnswerList.answer3}
                         checked={
                           this.state.selectedOption ===
@@ -276,15 +282,17 @@ class Question extends Component {
                         }
                         onChange={this.onValueChange}
                       />
-                      {this.state.currentAnswerList.answer3}
-                    </label>
-                  </div>
-                )}
-                {this.state.currentAnswerList.answer4 !== "" && (
-                  <div className="radio">
-                    <label>
+                      <label for="radio3">
+                        {this.state.currentAnswerList.answer3}
+                      </label>
+                    </div>
+                  )}
+                  {this.state.currentAnswerList.answer4 !== "" && (
+                    <div className="inputGroup">
                       <input
                         type="radio"
+                        name="radio"
+                        id="radio4"
                         value={this.state.currentAnswerList.answer4}
                         checked={
                           this.state.selectedOption ===
@@ -292,35 +300,39 @@ class Question extends Component {
                         }
                         onChange={this.onValueChange}
                       />
-                      {this.state.currentAnswerList.answer4}
-                    </label>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  className="btn btn-success"
-                  onClick={this.handleMCUpdate}
-                >
-                  Submit
-                </button>
-              </form>
-              <h1>Selected option is : {this.state.selectedOption}</h1>
-              <h1>Correct Answer: {this.state.currentCorrectAnswer}</h1>
-              <h1>current question type: {this.state.currentQuestionType}</h1>
-            </div>
-          )}
-        {this.state.altQuestionIfFalse === false &&
-          this.state.currentQuestionType === "MC" &&
-          this.state.QuizOver !== true && (
-            <div>
-              <h1>{this.state.currentAltQuestion}</h1>
-              <form onSubmit={this.formSubmit}>
-                {this.state.currentAltAnswerList.answer1 !== "" && (
-                  <div className="radio">
-                    <label>
+                      <label for="radio4">
+                        {this.state.currentAnswerList.answer4}
+                      </label>
+                    </div>
+                  )}
+                  <h1>
+                    <span></span>
+                    <button
+                      type="submit"
+                      className="btn btn-dark float-right"
+                      onClick={this.handleMCUpdate}
+                    >
+                      Submit
+                    </button>
+                  </h1>
+                </form>
+                <h1>Selected option is : {this.state.selectedOption}</h1>
+                <h1>Correct Answer: {this.state.currentCorrectAnswer}</h1>
+                <h1>current question type: {this.state.currentQuestionType}</h1>
+              </div>
+            )}
+          {this.state.altQuestionIfFalse === false &&
+            this.state.currentQuestionType === "MC" &&
+            this.state.QuizOver !== true && (
+              <div>
+                <h1 className="center">{this.state.currentAltQuestion}</h1>
+                <form onSubmit={this.formSubmit} class="form">
+                  {this.state.currentAltAnswerList.answer1 !== "" && (
+                    <div className="inputGroup">
                       <input
                         type="radio"
+                        name="radio"
+                        id="radio1"
                         value={this.state.currentAltAnswerList.answer1}
                         checked={
                           this.state.selectedOption ===
@@ -328,15 +340,17 @@ class Question extends Component {
                         }
                         onChange={this.onValueChange}
                       />
-                      {this.state.currentAltAnswerList.answer1}
-                    </label>
-                  </div>
-                )}
-                {this.state.currentAltAnswerList.answer2 !== "" && (
-                  <div className="radio">
-                    <label>
+                      <label for="radio1">
+                        {this.state.currentAltAnswerList.answer1}
+                      </label>
+                    </div>
+                  )}
+                  {this.state.currentAltAnswerList.answer2 !== "" && (
+                    <div className="inputGroup">
                       <input
                         type="radio"
+                        name="radio"
+                        id="radio2"
                         value={this.state.currentAltAnswerList.answer2}
                         checked={
                           this.state.selectedOption ===
@@ -344,15 +358,17 @@ class Question extends Component {
                         }
                         onChange={this.onValueChange}
                       />
-                      {this.state.currentAltAnswerList.answer2}
-                    </label>
-                  </div>
-                )}
-                {this.state.currentAltAnswerList.answer3 !== "" && (
-                  <div className="radio">
-                    <label>
+                      <label for="radio2">
+                        {this.state.currentAltAnswerList.answer2}
+                      </label>
+                    </div>
+                  )}
+                  {this.state.currentAltAnswerList.answer3 !== "" && (
+                    <div className="inputGroup ">
                       <input
                         type="radio"
+                        name="radio"
+                        id="radio3"
                         value={this.state.currentAltAnswerList.answer3}
                         checked={
                           this.state.selectedOption ===
@@ -360,15 +376,17 @@ class Question extends Component {
                         }
                         onChange={this.onValueChange}
                       />
-                      {this.state.currentAltAnswerList.answer3}
-                    </label>
-                  </div>
-                )}
-                {this.state.currentAltAnswerList.answer4 !== "" && (
-                  <div className="radio">
-                    <label>
+                      <label for="radio3">
+                        {this.state.currentAltAnswerList.answer3}
+                      </label>
+                    </div>
+                  )}
+                  {this.state.currentAltAnswerList.answer4 !== "" && (
+                    <div className="inputGroup">
                       <input
                         type="radio"
+                        name="radio"
+                        id="radio4"
                         value={this.state.currentAltAnswerList.answer4}
                         checked={
                           this.state.selectedOption ===
@@ -376,74 +394,76 @@ class Question extends Component {
                         }
                         onChange={this.onValueChange}
                       />
-                      {this.state.currentAltAnswerList.answer4}
-                    </label>
-                  </div>
-                )}
-                <button
-                  type="submit"
-                  className="btn btn-success"
-                  onClick={this.handleMCUpdate}
-                >
-                  Submit
-                </button>
-              </form>
-              <h1>Selected option is : {this.state.selectedOption}</h1>
-              <h1>Correct Answer: {this.state.currentAltCorrectAnswer}</h1>
-              <h1>current question type: {this.state.currentQuestionType}</h1>
-            </div>
-          )}
-        {this.state.currentQuestionType === "FREE" &&
-          this.state.altQuestionIfFalse === true &&
-          this.state.QuizOver !== true && (
-            <div>
-              <h1>{this.state.currentQuestion}</h1>
-              <div className="form-group">
-                <textarea
-                  className="form-control"
-                  id="exampleFormControlTextarea1"
-                  rows="3"
-                ></textarea>
+                      <label for="radio4">
+                        {this.state.currentAltAnswerList.answer4}
+                      </label>
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    className="btn btn-dark float-right"
+                    onClick={this.handleMCUpdate}
+                  >
+                    Submit
+                  </button>
+                </form>
+                <h1>Selected option is : {this.state.selectedOption}</h1>
+                <h1>Correct Answer: {this.state.currentAltCorrectAnswer}</h1>
+                <h1>current question type: {this.state.currentQuestionType}</h1>
               </div>
-              <form onSubmit={this.formSubmit}>
-                <button
-                  type="submit"
-                  className="btn btn-success"
-                  onClick={this.handleFreeResponse}
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
-          )}
-        {this.state.currentQuestionType === "FREE" &&
-          this.state.altQuestionIfFalse === false &&
-          this.state.QuizOver !== true && (
-            <div>
-              <h1>{this.state.currentAltQuestion}</h1>
-              <form onSubmit={this.formSubmit}>
+            )}
+          {this.state.currentQuestionType === "FREE" &&
+            this.state.altQuestionIfFalse === true &&
+            this.state.QuizOver !== true && (
+              <div>
+                <h1 className="center">{this.state.currentQuestion}</h1>
                 <div className="form-group">
                   <textarea
-                    className="form-control"
+                    className="form-control textarea"
                     id="exampleFormControlTextarea1"
                     rows="3"
                   ></textarea>
                 </div>
-                <button
-                  type="submit"
-                  className="btn btn-success"
-                  onClick={this.handleFreeResponse}
-                >
-                  Submit
-                </button>
-              </form>
+                <form onSubmit={this.formSubmit}>
+                  <button
+                    type="submit"
+                    className="btn btn-dark float-right"
+                    onClick={this.handleFreeResponse}
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+            )}
+          {this.state.currentQuestionType === "FREE" &&
+            this.state.altQuestionIfFalse === false &&
+            this.state.QuizOver !== true && (
+              <div>
+                <h1 className="center">{this.state.currentAltQuestion}</h1>
+                <form onSubmit={this.formSubmit}>
+                  <div className="form-group">
+                    <textarea
+                      className="form-control textarea"
+                      id="exampleFormControlTextarea1"
+                      rows="3"
+                    ></textarea>
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-dark float-right"
+                    onClick={this.handleFreeResponse}
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+            )}
+          {this.state.QuizOver === true && (
+            <div>
+              <h1>Quiz Completed</h1>
             </div>
           )}
-        {this.state.QuizOver === true && (
-          <div>
-            <h1>Quiz Completed</h1>
-          </div>
-        )}
+        </div>
       </React.Fragment>
     );
   }
