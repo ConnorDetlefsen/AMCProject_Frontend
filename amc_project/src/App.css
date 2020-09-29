@@ -154,6 +154,7 @@ code {
 
 .background {
   background-color: #9aa3ac;
+  height: 50rem;
 }
 
 .center {
@@ -171,3 +172,7 @@ code {
   border: 3px solid #cccccc;
   padding: 5px;
 }
+
+/*login css */
+
+/*end of login css */

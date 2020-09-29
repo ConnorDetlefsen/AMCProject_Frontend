@@ -1,17 +1,35 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
 import Input from "./Input";
-import { login } from "../APIServices/authService";
+import http from "../APIServices/httpService";
+import config from "../APIServices/config.json";
+import { ToastContainer, toast } from "react-toastify";
+import UserContext from "../Context/UserContext";
 
 class Login extends Component {
+  static contextType = UserContext;
+
   state = {
     account: { username: "", password: "" },
     errors: {},
+    userList: {},
   };
 
   schema = {
     username: Joi.string().required().label("username"),
     password: Joi.string().required().label("password"),
+  };
+
+  async componentDidMount() {
+    http.get(config.apiEndpoint + "/users/").then((res) => {
+      console.log(res.data);
+      this.setState({ userList: res.data });
+    });
+  }
+
+  //used in do submit to send successfully logged in user to quiz
+  sleep = (milliseconds) => {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   };
 
   validate = () => {
@@ -52,7 +70,7 @@ class Login extends Component {
     account[input.name] = input.value;
     this.setState({ account, errors });
   };
-
+  /* token do submit 
   doSubmit = async () => {
     try {
       const { account } = this.state;
@@ -67,33 +85,88 @@ class Login extends Component {
         this.setState({ errors });
       }
     }
+  }; */
+
+  // do submit from bas
+  doSubmit = async () => {
+    const { userList, account } = this.state;
+    const { history } = this.props;
+
+    for (let x in userList) {
+      if (
+        account.username === userList[x].username &&
+        account.password === userList[x].password
+      ) {
+        this.context.currentUser.username = userList[x].username;
+        this.context.currentUser.ID = userList[x].id;
+        this.context.currentUser.CurrentQuestion = userList[x].currentQuestion;
+
+        //tracks user log in
+        http
+          .post(config.apiEndpoint + "/logintracking/", {
+            user_id: userList[x].id,
+          })
+          .then((res) => {
+            console.log(res);
+          });
+
+        toast.success(`Logged in successfully!`);
+
+        await this.sleep(2000);
+
+        history.push("/quiz");
+      } else {
+        toast.error("Username and Password doesn't match");
+      }
+    }
   };
 
   render() {
     const { account, errors } = this.state;
     return (
-      <div>
-        <h1>Login</h1>
-        <form onSubmit={this.handleSubmit}>
-          <Input
-            name="username"
-            value={account.username}
-            label="Username"
-            onChange={this.handleChange}
-            error={errors.username}
-          />
-          <Input
-            name="password"
-            value={account.password}
-            label="Password"
-            onChange={this.handleChange}
-            error={errors.password}
-          />
-          <button disabled={this.validate()} className="btn btn-primary">
-            Login
-          </button>
-        </form>
-      </div>
+      <React.Fragment>
+        <ToastContainer />
+
+        <div className="login-body">
+          <div className="login-page ">
+            <div className="login-css">
+              <div className="login-form">
+                <div className="login">
+                  <div className="Login Header">
+                    <h1>
+                      <b>AMC User Login</b>
+                    </h1>
+                  </div>
+                </div>
+                <form className="login-form " onSubmit={this.handleSubmit}>
+                  <Input
+                    className="login-input"
+                    name="username"
+                    value={account.username}
+                    label="Username"
+                    onChange={this.handleChange}
+                    error={errors.username}
+                  />
+                  <Input
+                    className="login-input"
+                    name="password"
+                    value={account.password}
+                    label="Password"
+                    onChange={this.handleChange}
+                    error={errors.password}
+                  />
+                  <button
+                    disabled={this.validate()}
+                    className="btn btn-primary login-button"
+                  >
+                    Login
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </React.Fragment>
     );
   }
 }
